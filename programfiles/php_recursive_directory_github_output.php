@@ -6,8 +6,9 @@
 // Function definitions
 
 /**
- @param {string} $uri: The URI that return json.
- @return {string}: The return from uri.
+ * Outputs the content given a json uri
+ * @param {string} $uri: The URI that return json.
+ * @return {string}: The return from uri.
  */
 function curl_dir($uri) {
     $ch = curl_init();
@@ -19,11 +20,32 @@ function curl_dir($uri) {
     return $content;
 }
 
+/**
+ * Format and output the content
+ * @param {string} The whole content to be outputed
+ * @return {void} 
+ */
 function print_page($page) {
     header('Content-Type: text/plain');
     echo $page;
 }
 
+/**
+ */
+function outputs_tree($uri) {
+    $json_returned = curl_dir($uri);
+    $obj = json_decode($json_returned);
+
+    $return_string = "";
+
+    foreach ($obj as $entry) {
+        $return_string .= $entry["name"] . " | " . $entry["type"] . "\n";
+        // $return_string .= "oi\n";
+    }
+    return $return_string;
+    
+}
+
 // Usage
-$content = curl_dir('https://api.github.com/repos/danilocgsilva/WebDevScripts/contents?per_page=10000');
+$content = outputs_tree('https://api.github.com/repos/danilocgsilva/WebDevScripts/contents?per_page=10000');
 print_page($content);
