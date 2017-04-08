@@ -36,8 +36,8 @@ function outputs_tree($uri, $prefix) {
 
     $return_string = "";
 
-    $return_string .= "uri: " . $uri . "\n";
-    $return_string .= "prefixo: " . $prefix . "\n";
+    // $return_string .= "uri: " . $uri . "\n";
+    // $return_string .= "prefixo: " . $prefix . "\n";
 
 
     $json_returned = curl_dir($uri);
@@ -46,10 +46,10 @@ function outputs_tree($uri, $prefix) {
     foreach ($obj as $entry) {
         $type = $entry->type;
         if ($type == "file") {
-            $return_string .= $prefix . "/" . $entry->name . "\n";
+            $return_string .= $prefix . $entry->name . "\n";
         } else {
             //$return_string .= $prefix . "/" . $entry->url;
-            $content = outputs_tree($entry->url, $entry->name);
+            $content = outputs_tree($entry->url, $entry->name . "/");
             $return_string .= $content;
         }
     }
