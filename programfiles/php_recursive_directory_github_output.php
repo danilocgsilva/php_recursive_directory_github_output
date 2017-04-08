@@ -1,8 +1,5 @@
 <?php
 
-// Init vars
-// It is customized to fetch contents form danilocgsilva, but you can adapt to youts own necessities
-
 // Function definitions
 
 /**
@@ -15,6 +12,13 @@ function curl_dir($uri) {
     curl_setopt($ch, CURLOPT_URL, $uri);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
+
+    GLOBAL $authorizationstring;
+    if (isset($authorizationstring)) {
+        curl_setopt($ch, CURLOPT_USERPWD, $authorizationstring);
+        curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    }
+
     $content = curl_exec($ch);
     curl_close($ch);
     return $content;
@@ -22,7 +26,7 @@ function curl_dir($uri) {
 
 /**
  * Format and output the content
- * @param {string} The whole content to be outputed
+ * @param $oage {string} The whole content to be outputed
  * @return {void} 
  */
 function print_page($page) {
@@ -31,14 +35,14 @@ function print_page($page) {
 }
 
 /**
+ * Outpuths the whole thing, based in the uri.
+ * @param $uri {string} The json uri
+ * @param $prefix {string} Usable only in the recursive action to points out which folder is outputing.
+ * @return {string} The string tree.
  */
 function outputs_tree($uri, $prefix) {
 
     $return_string = "";
-
-    // $return_string .= "uri: " . $uri . "\n";
-    // $return_string .= "prefixo: " . $prefix . "\n";
-
 
     $json_returned = curl_dir($uri);
     $obj = json_decode($json_returned);
@@ -54,7 +58,19 @@ function outputs_tree($uri, $prefix) {
         }
     }
     return $return_string;
-    
+}
+
+function init_creds() {
+    $file = 'php_recursive_directory_github_output.creds.php';
+    if (file_exists($file) && is_readable(file)) {
+        include_once($file);
+        if ($authorizationstring == "USERNAME:PASSWORD") {
+            $content = "You tryied to set the ahtorization string to get more requisitions from github server, but you did not changed anything." . "\n";
+            $content .= "Write the correct credential string in the file or simple remove it to let script proced.";
+            print_page($content);
+            exit();
+        }
+    }
 }
 
 // Usage
