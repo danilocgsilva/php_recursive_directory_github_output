@@ -2,14 +2,14 @@
 
 
 // First thing: analyses the input value. It must have the repository name and something "not malicious"
-$issetrepo = isset($_GET['repo']);
-$repolength = strlen($_GET['repo']) < 100;
-$repostring = preg_match('/[a-zA-Z0-9-_]/', $_GET['repo']);
-if ($issetrepo && $repolength && $repostring) {
-    $repository_name = $_GET['repo'];
-} else {
-    exit();
-}
+// $issetrepo = isset($_GET['repo']);
+// $repolength = strlen($_GET['repo']) < 100;
+// $repostring = preg_match('/[a-zA-Z0-9-_]/', $_GET['repo']);
+// if ($issetrepo && $repolength && $repostring) {
+//     $repository_name = $_GET['repo'];
+// } else {
+//     exit();
+// }
 
 // Function definitions
 
@@ -71,6 +71,10 @@ function outputs_tree($uri, $prefix) {
     return $return_string;
 }
 
+/**
+ * Returns the credentials, if provided.
+ * @return {string}: The credential needed to be used by the script
+ */
 function init_creds() {
     $file = 'php_recursive_directory_github_output.creds.php';
     if (file_exists($file) && is_readable($file)) {
@@ -85,8 +89,27 @@ function init_creds() {
     }
 }
 
+/**
+ * Basic input validation from get parameter
+ * @param $get_name {string}: The get name parameter
+ * @return {string}: Return the value from the string.
+ */
+ function validate_get($get_name) {
+
+    $issetvar = isset($_GET[$get_name]);
+    $varlength = strlen($_GET[$get_name]) < 100;
+    $varstring = preg_match('/[a-zA-Z0-9-_]/', $_GET[$get_name]);
+
+    if ($issetvar && $varlength && $varstring) {
+        return $_GET[$get_name];
+    } else {
+        exit();
+    } 
+}
+
 // Usage
 $authorizationstring = init_creds();
+$repository_name = validate_get('repo');
 $uri = 'https://api.github.com/repos/danilocgsilva/' . $repository_name . '/contents?per_page=10000';
 $content = outputs_tree($uri);
 print_page($content);
