@@ -39,7 +39,10 @@ function outputs_tree($uri) {
     $return_string = "";
 
     foreach ($obj as $entry) {
-        $return_string .= $entry["name"] . " | " . $entry["type"] . "\n";
+        ob_start();
+        var_dump($entry);
+        $return_loop = ob_get_clean(); 
+        $return_string .= $return_loop;
         // $return_string .= "oi\n";
     }
     return $return_string;
