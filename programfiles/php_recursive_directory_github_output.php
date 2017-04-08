@@ -46,13 +46,12 @@ function outputs_tree($uri, $prefix) {
     foreach ($obj as $entry) {
         $type = $entry->type;
         if ($type == "file") {
-            $return_string .= $prefix . $entry->name;
+            $return_string .= $prefix . "/" . $entry->name . "\n";
         } else {
             //$return_string .= $prefix . "/" . $entry->url;
             $content = outputs_tree($entry->url, $entry->name);
             $return_string .= $content;
         }
-        $return_string .= "\n";
     }
     return $return_string;
     
