@@ -32,23 +32,32 @@ function print_page($page) {
 
 /**
  */
-function outputs_tree($uri) {
-    $json_returned = curl_dir($uri);
-    $obj = json_decode($json_returned);
+function outputs_tree($uri, $prefix) {
 
     $return_string = "";
 
+    $return_string .= "uri: " . $uri . "\n";
+    $return_string .= "prefixo: " . $prefix . "\n";
+
+
+    $json_returned = curl_dir($uri);
+    $obj = json_decode($json_returned);
+
     foreach ($obj as $entry) {
-        ob_start();
-        var_dump($entry);
-        $return_loop = ob_get_clean(); 
-        $return_string .= $return_loop;
-        // $return_string .= "oi\n";
+        $type = $entry->type;
+        if ($type == "file") {
+            $return_string .= $prefix . $entry->name;
+        } else {
+            //$return_string .= $prefix . "/" . $entry->url;
+            $content = outputs_tree($entry->url, $entry->name);
+            $return_string .= $content;
+        }
+        $return_string .= "\n";
     }
     return $return_string;
     
 }
 
 // Usage
-$content = outputs_tree('https://api.github.com/repos/danilocgsilva/WebDevScripts/contents?per_page=10000');
+$content = outputs_tree('https://api.github.com/repos/danilocgsilva/danilocgsilva_shell_libs/contents?per_page=10000');
 print_page($content);
