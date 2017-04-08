@@ -1,5 +1,16 @@
 <?php
 
+
+// First thing: analyses the input value. It must have the repository name and something "not malicious"
+$issetrepo = isset($_GET['repo']);
+$repolength = strlen($_GET['repo']) < 100;
+$repostring = preg_match('/[a-zA-Z0-9-_]/', $_GET['repo']);
+if ($issetrepo && $repolength && $repostring) {
+    $repository_name = $_GET['repo'];
+} else {
+    exit();
+}
+
 // Function definitions
 
 /**
@@ -62,7 +73,7 @@ function outputs_tree($uri, $prefix) {
 
 function init_creds() {
     $file = 'php_recursive_directory_github_output.creds.php';
-    if (file_exists($file) && is_readable(file)) {
+    if (file_exists($file) && is_readable($file)) {
         include_once($file);
         if ($authorizationstring == "USERNAME:PASSWORD") {
             $content = "You tryied to set the ahtorization string to get more requisitions from github server, but you did not changed anything." . "\n";
@@ -70,9 +81,12 @@ function init_creds() {
             print_page($content);
             exit();
         }
+        return $authorizationstring;
     }
 }
 
 // Usage
-$content = outputs_tree('https://api.github.com/repos/danilocgsilva/danilocgsilva_shell_libs/contents?per_page=10000');
+$authorizationstring = init_creds();
+$uri = 'https://api.github.com/repos/danilocgsilva/' . $repository_name . '/contents?per_page=10000';
+$content = outputs_tree($uri);
 print_page($content);
