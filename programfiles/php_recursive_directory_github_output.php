@@ -25,8 +25,10 @@ function curl_dir($uri) {
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
 
     GLOBAL $authorizationstring;
+    GLOBAL $user_name;
+
     if (isset($authorizationstring)) {
-        curl_setopt($ch, CURLOPT_USERPWD, $authorizationstring);
+        curl_setopt($ch, CURLOPT_USERPWD, $user_name . ':' . $authorizationstring);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     }
 
@@ -110,6 +112,7 @@ function init_creds() {
 // Usage
 $authorizationstring = init_creds();
 $repository_name = validate_get('repo');
-$uri = 'https://api.github.com/repos/danilocgsilva/' . $repository_name . '/contents?per_page=10000';
+$user_name = validate_get('user');
+$uri = 'https://api.github.com/repos/' . $user_name . '/' . $repository_name . '/contents?per_page=10000';
 $content = outputs_tree($uri);
 print_page($content);

@@ -1,2 +1,2 @@
 <?php
-$authorizationstring = "USERNAME:PASSWORD";
+$authorizationstring = "PASSWORD";
